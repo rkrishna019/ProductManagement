@@ -1,12 +1,16 @@
 package epam.com.example.Second_Spring_Boot_Application.service;
 
+import epam.com.example.Second_Spring_Boot_Application.Mapper.ProductMapper;
+import epam.com.example.Second_Spring_Boot_Application.dto.ProductDto;
 import epam.com.example.Second_Spring_Boot_Application.model.Product;
 import epam.com.example.Second_Spring_Boot_Application.repositories.ProductRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -15,21 +19,37 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepo productRepo;
 
     @Override
-    public Product saveProduct(Product product) {
-        return productRepo.save(product);
+    public ProductDto saveProduct(ProductDto productDto) {
+
+        // Convert this ProductDto to JPA entity to save the product in DataBase.
+
+        Product product  = ProductMapper.mapToProduct(productDto);
+        Product savedProduct =  productRepo.save(product);
+
+// COnvert JPA entity into ProductDto
+        ProductDto savedProductDto = ProductMapper.mapToDto(savedProduct);
+
+        return savedProductDto;
     }
 
-    public List<Product> getProduct(){
-        return productRepo.findAll();
+    public List<ProductDto> getProduct(){
+        List<Product> list = productRepo.findAll();
+
+        List<ProductDto> listDto = new ArrayList<ProductDto>();
+        listDto =  list.stream().map(ProductMapper :: mapToDto).collect(Collectors.toList());
+        return listDto;
     }
 
-    public Optional<Product> getById(Integer id){
-        return productRepo.findById(id);
+    public ProductDto getById(Integer id){
+        Optional<Product> optionalProduct =  productRepo.findById(id);
+        Product product = optionalProduct.get();
+        return ProductMapper.mapToDto(product);
     }
 
-    public Product updateProduct(Product product){
+    public ProductDto updateProduct(ProductDto product){
 
         Product exstingProduct = productRepo.findById(product.getId()).get();
+
         exstingProduct.setName(product.getName());
         exstingProduct.setPrice(product.getPrice());
         exstingProduct.setDescription(product.getDescription());
@@ -38,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepo.save(exstingProduct);
 
-        return updatedProduct;
+        return ProductMapper.mapToDto(updatedProduct);
     }
 
     public void deleteProduct(Integer id){

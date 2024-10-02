@@ -1,5 +1,6 @@
 package epam.com.example.Second_Spring_Boot_Application.service;
 
+import epam.com.example.Second_Spring_Boot_Application.dto.ProductDto;
 import epam.com.example.Second_Spring_Boot_Application.model.Product;
 
 import java.util.List;
@@ -9,12 +10,12 @@ public interface ProductService {
 
 
 
-    public  Product saveProduct(Product product);
-    public List<Product> getProduct();
+    public ProductDto saveProduct(ProductDto productDto);
+    public List<ProductDto> getProduct();
 
-    public Optional<Product> getById(Integer id);
+    public ProductDto getById(Integer id);
 
-    public Product updateProduct(Product product);
+    public ProductDto updateProduct(ProductDto productDto);
 
     public void deleteProduct(Integer id);
 }
