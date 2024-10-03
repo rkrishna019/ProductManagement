@@ -2,6 +2,7 @@ package epam.com.example.Second_Spring_Boot_Application.service;
 
 import epam.com.example.Second_Spring_Boot_Application.Mapper.ProductMapper;
 import epam.com.example.Second_Spring_Boot_Application.dto.ProductDto;
+import epam.com.example.Second_Spring_Boot_Application.exception.ResourceNotFoundException;
 import epam.com.example.Second_Spring_Boot_Application.model.Product;
 import epam.com.example.Second_Spring_Boot_Application.repositories.ProductRepo;
 import lombok.AllArgsConstructor;
@@ -52,15 +53,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public ProductDto getById(Integer id){
-        Optional<Product> optionalProduct =  productRepo.findById(id);
-        Product product = optionalProduct.get();
+       Product product =  productRepo.findById(id).orElseThrow(
+
+                () -> new ResourceNotFoundException("Product","id",id)
+        );
+        //Product product = optionalProduct.get();
        // return ProductMapper.mapToDto(product);
         return modelMapper.map(product,ProductDto.class);
     }
 
     public ProductDto updateProduct(ProductDto product){
 
-        Product exstingProduct = productRepo.findById(product.getId()).get();
+        Product exstingProduct = productRepo.findById(product.getId()).orElseThrow(
+
+                ()-> new ResourceNotFoundException("Product","id", product.getId())
+        );
 
         exstingProduct.setName(product.getName());
         exstingProduct.setPrice(product.getPrice());
@@ -75,6 +82,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public void deleteProduct(Integer id){
-         productRepo.deleteById(id);
+        Product existingProduct =  productRepo.findById(id).orElseThrow(
+
+                ()-> new ResourceNotFoundException("Product","id",id)
+
+        );
+        productRepo.deleteById(id);
     }
 }
