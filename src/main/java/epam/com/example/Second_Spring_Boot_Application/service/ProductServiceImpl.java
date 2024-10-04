@@ -2,6 +2,7 @@ package epam.com.example.Second_Spring_Boot_Application.service;
 
 import epam.com.example.Second_Spring_Boot_Application.Mapper.ProductMapper;
 import epam.com.example.Second_Spring_Boot_Application.dto.ProductDto;
+import epam.com.example.Second_Spring_Boot_Application.exception.NameAlreadyExistException;
 import epam.com.example.Second_Spring_Boot_Application.exception.ResourceNotFoundException;
 import epam.com.example.Second_Spring_Boot_Application.model.Product;
 import epam.com.example.Second_Spring_Boot_Application.repositories.ProductRepo;
@@ -30,6 +31,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto saveProduct(ProductDto productDto) {
+
+
+        Optional<Product> optionalProduct = productRepo.findByName(productDto.getName());
+
+        if(optionalProduct.isPresent()){
+            throw new NameAlreadyExistException("Product Name Already Present in the database");
+        }
+
 
         // Convert this ProductDto to JPA entity to save the product in DataBase.
 
