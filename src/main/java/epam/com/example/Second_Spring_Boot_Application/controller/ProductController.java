@@ -6,6 +6,7 @@ import epam.com.example.Second_Spring_Boot_Application.exception.ErrorDetails;
 import epam.com.example.Second_Spring_Boot_Application.exception.ResourceNotFoundException;
 import epam.com.example.Second_Spring_Boot_Application.model.Product;
 import epam.com.example.Second_Spring_Boot_Application.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto){
+    public ResponseEntity<ProductDto> createProduct(@RequestBody @Valid ProductDto productDto){
 
         ProductDto savedProduct = productService.saveProduct(productDto);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
@@ -49,7 +50,7 @@ public class ProductController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") Integer product_id, @RequestBody ProductDto product){
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") Integer product_id, @Valid @RequestBody ProductDto product){
 
         product.setId(product_id);
         ProductDto updatedProduct = productService. updateProduct(product);
